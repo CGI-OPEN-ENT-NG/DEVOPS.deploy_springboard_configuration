@@ -83,7 +83,7 @@ flatFsStorage: 'false'
 smsProviders: '{}'
 cluster: 'false'
 neo4jSlaveReadOnly: 'false'
-shareConf: 'false'
+csrfToken: 'true'
 # E.g. your domain name
 #modowner: fr.wseduc
 
