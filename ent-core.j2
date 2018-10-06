@@ -99,7 +99,7 @@
       "worker": true,
       "config": {
         "address": "entcore.sms",
-        "providers": {}
+        "providers": {{ smsProviders }}
       }
     },
     {
@@ -111,50 +111,71 @@
       }
     },
     {
-      "name": "org.entcore~infra~3.1.13",
+      "name": "org.entcore~infra~{{ entcoreVersion }}",
       "waitDeploy": true,
       "config": {
         "port": 8001,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "auto-redeploy": false,
         "path-prefix": "infra",
         "sql": true,
-
-        "cluster": false,
-        "skins": { "localhost:8090": "cg77", "192.168.99.100:8090": "cg77" },
-
-        "file-system": {
-          "path": "/srv/storage/",
-          "flat": false
+        {% if signKey is defined and signKey %}
+        "key": "{{ signKey }}",
+        {% endif %}
+        {% if contentSecurityPolicy is defined and contentSecurityPolicy %}
+        "content-security-policy": "{{ contentSecurityPolicy }}",
+        {% endif %}
+        "cluster" : {{ cluster }},
+        "skins": {{ skins }},
+        {% if swiftUri is defined and swiftUri %}
+        "swift" : {
+          "uri" : "{{ swiftUri}}",
+          "container" : "{{ swiftContainer }}",
+          "user" : "{{ swiftUser }}",
+          "key" : "{{ swiftKey }}"
         },
-
+        {% elif fsStoragePath is defined and fsStoragePath %}
+        "file-system" : {
+          "path" : "{{ fsStoragePath }}",
+          "flat" : {{ flatFsStorage }}
+        },
+        {% else %}
+        "gridfs-address" : "wse.gridfs.persistor",
+        {% endif %}
+        {% if sharedConf is defined and shareConf %}
+        "sharedConf": {{ sharedConf }},
+        {% endif %}
+        {% if emailConfig is defined and emailConfig %}
+        "emailConfig": {{ emailConfig }},
+        {% else %}
         "emailConfig": {
-          "email": "ne-pas-repondre@cg77.fr",
-          "host": "http://localhost:8090"
+          "email": "{{ senderEmail }}",
+          "host": "{{ host }}"
         },
-
+        {% endif %}
         "eventConfig": {
-          "user-blacklist": []
+        "user-blacklist" : []
         },
-        "neo4jConfig": {
-          "server-uri": "http://neo4j:7474/db/data/",
-
-          "slave-readonly": false,
-          "legacy-indexes": [
-            { "for": "node", "name": "node_auto_index", "type": "fulltext" }
-          ]
+        "neo4jConfig" : {
+          {% if serverUris is defined and serverUris %}
+          "server-uris": {{ serverUris }},
+          {% else %}
+          "server-uri": "{{ neo4jUri }}/db/data/",
+          {% endif %}
+          "slave-readonly": {{ neo4jSlaveReadOnly }},
+          "legacy-indexes" : [{ "for" : "node", "name" : "node_auto_index", "type" : "fulltext" }]
         }
       }
     },
 
     {
-      "name": "org.entcore~app-registry~3.1.13",
+      "name": "org.entcore~app-registry~{{ entcoreVersion }}",
       "waitDeploy": true,
       "config": {
         "main": "org.entcore.registry.AppRegistry",
         "auto-redeploy": false,
         "csrf-token": true,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "ssl": false,
         "address": "wse.app.registry",
         "port": 8012,
@@ -162,7 +183,7 @@
       }
     },
     {
-      "name": "org.entcore~session~3.1.13",
+      "name": "org.entcore~session~{{ entcoreVersion }}",
       "worker": true,
       "config": {
         "session_timeout": 10800000,
@@ -170,13 +191,13 @@
       }
     },
     {
-      "name": "org.entcore~auth~3.1.13",
+      "name": "org.entcore~auth~{{ entcoreVersion }}",
       "config": {
         "path-prefix": "auth",
         "port": 8009,
         "auto-redeploy": false,
         "ssl": false,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "email": "ne-pas-repondre@cg77.fr",
         "mandatory": {},
         "activationAutoLogin": false,
@@ -193,12 +214,12 @@
       }
     },
     {
-      "name": "org.entcore~directory~3.1.13",
+      "name": "org.entcore~directory~{{ entcoreVersion }}",
       "config": {
         "path-prefix": "directory",
         "auto-redeploy": false,
         "ssl": false,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "host": "http://localhost:8090",
         "csrf-token": true,
         "port": 8003,
@@ -224,12 +245,12 @@
       }
     },
     {
-      "name": "org.entcore~workspace~3.1.13",
+      "name": "org.entcore~workspace~{{ entcoreVersion }}",
       "config": {
         "main": "org.entcore.workspace.Workspace",
         "auto-redeploy": false,
         "csrf-token": true,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "ssl": false,
         "host": "http://localhost:8090",
         "neo4jPlugin": false,
@@ -244,13 +265,13 @@
       }
     },
     {
-      "name": "org.entcore~communication~3.1.13",
+      "name": "org.entcore~communication~{{ entcoreVersion }}",
       "config": {
         "main": "org.entcore.communication.Communication",
         "auto-redeploy": false,
         "ssl": false,
         "csrf-token": true,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "port": 8015,
         "address": "wse.communication",
         "initDefaultCommunicationRules": {
@@ -288,13 +309,13 @@
       }
     },
     {
-      "name": "org.entcore~portal~3.1.13",
+      "name": "org.entcore~portal~{{ entcoreVersion }}",
       "config": {
         "port": 8017,
         "auto-redeploy": false,
         "ssl": false,
         "csrf-token": true,
-        "mode": "dev",
+        "mode": "{{ mode }}",
 
         "assets-path": "/srv/springboard",
 
@@ -379,11 +400,11 @@
       }
     },
     {
-      "name": "org.entcore~conversation~3.1.13",
+      "name": "org.entcore~conversation~{{ entcoreVersion }}",
       "config": {
         "main": "org.entcore.conversation.Conversation",
         "host": "http://localhost:8090",
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "csrf-token": true,
         "ssl": false,
         "auto-redeploy": false,
@@ -398,7 +419,7 @@
       }
     },
     {
-      "name": "org.entcore~feeder~3.1.13",
+      "name": "org.entcore~feeder~{{ entcoreVersion }}",
       "worker": true,
       "config": {
         "address": "entcore.feeder",
@@ -406,7 +427,7 @@
         "apply-communication-rules": true,
         "import-files": "/home/wse/aaf",
         "feeder": "AAF",
-        "mode": "dev",
+        "mode": "{{ mode }}",
 
         "auto-export": false,
         "exclude-mark-duplicates-by-source": ["CSV"],
@@ -416,7 +437,7 @@
       }
     },
     {
-      "name": "org.entcore~timeline~3.1.13",
+      "name": "org.entcore~timeline~{{ entcoreVersion }}",
       "config": {
         "csrf-token": true,
         "main": "org.entcore.timeline.Timeline",
@@ -430,11 +451,11 @@
         "antiFloodClear": 60000,
         "sql": true,
         "db-schema": "flashmsg",
-        "mode": "dev"
+        "mode": "{{ mode }}"
       }
     },
     {
-      "name": "org.entcore~cas~3.1.13",
+      "name": "org.entcore~cas~{{ entcoreVersion }}",
       "config": {
         "main": "org.entcore.cas.Cas",
         "port": 8023,
@@ -448,7 +469,7 @@
         "external-login-uri": "",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "services": [
           {
@@ -530,11 +551,11 @@
       }
     },
     {
-      "name": "org.entcore~archive~3.1.13",
+      "name": "org.entcore~archive~{{ entcoreVersion }}",
       "config": {
         "main": "org.entcore.archive.Archive",
         "port": 8004,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "host": "http://localhost:8090",
         "ssl": false,
         "email": "ne-pas-repondre@cg77.fr",
@@ -546,13 +567,13 @@
       }
     },
     {
-      "name": "org.entcore~admin~3.1.13",
+      "name": "org.entcore~admin~{{ entcoreVersion }}",
       "config": {
         "main": "org.entcore.admin.Admin",
         "port": 8089,
         "csrf-token": true,
         "ssl": false,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "auto-redeploy": false,
         "host": "http://localhost:8090",
         "app-name": "Admin",
@@ -576,7 +597,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "publicConf": {}
       }
@@ -593,7 +614,7 @@
         "app-address": "/blog",
         "host": "http://localhost:8090",
         "userbook-host": "http://localhost:8090",
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "publicConf": {}
       }
     },
@@ -611,7 +632,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009
       }
     },
@@ -628,7 +649,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "publicConf": {}
       }
@@ -646,7 +667,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "etherpad-domain": "ip-51-255-66.eu",
         "etherpad-url": "http://ns3027012.ip-51-255-66.eu:8092",
         "etherpad-api-key": "62cc0a3507b8ab13b3f641a07f93138d59880071af0e10f84d0f9e1937c76e97",
@@ -667,7 +688,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "publicConf": {}
       }
@@ -685,7 +706,7 @@
         "ssl": false,
         "auto-redeploy": false,
         "userbook-host": "http://localhost:8090",
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "publicConf": {}
       }
     },
@@ -703,7 +724,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "db-schema": "notes",
         "vsco-schema": "viesco",
@@ -734,7 +755,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "publicConf": {}
       }
@@ -753,7 +774,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "publicConf": {}
       }
@@ -771,7 +792,7 @@
         "auto-redeploy": false,
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "publicConf": {}
       }
     },
@@ -789,7 +810,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "sql": true,
         "exports": {
           "template-path": "./public/template/pdf/"
@@ -812,7 +833,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "publicConf": {}
       }
@@ -833,7 +854,7 @@
         "auto-redeploy": false,
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "publicConf": {}
       }
     },
@@ -851,7 +872,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009
       }
     },
@@ -868,7 +889,7 @@
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
         "app-registry.port": 8012,
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "entcore.port": 8009,
         "publicConf": {}
       }
@@ -886,7 +907,7 @@
         "auto-redeploy": false,
         "userbook-host": "http://localhost:8090",
         "integration-mode": "HTTP",
-        "mode": "dev",
+        "mode": "{{ mode }}",
         "publicConf": {}
       }
     },
