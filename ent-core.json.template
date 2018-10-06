@@ -1,0 +1,1189 @@
+{
+  "assets-path": "${assetsPath}",
+"services" : [
+{
+  "name": "io.vertx~mod-mongo-persistor~3.0.0",
+  "waitDeploy" : true,
+  "worker": true,
+  "multi-threaded": true,
+  "config":{
+    "address": "wse.mongodb.persistor",
+    <% if (seeds != null && !seeds.trim().isEmpty()) { %>
+    "seeds": ${seeds},
+    <% } %>
+    "host": "${mongoHost}",
+    "port": ${mongoPort},
+    "db_name": "${dbName}",
+    "use_mongo_types": true,
+    "pool_size": 10
+  }
+},
+{
+  "name" : "fr.wseduc~mod-image-resizer~2.0.0",
+  "worker": true,
+  "multi-threaded": true,
+  "waitDeploy" : true,
+  "config":{
+    "address" : "wse.image.resizer",
+    "fs-flat" : $flatFsStorage,
+    <% if (swiftUri != null && !swiftUri.trim().isEmpty()) { %>
+    "swift" : {
+      "uri" : "${swiftUri}",
+      "container" : "${swiftContainer}",
+      "user" : "${swiftUser}",
+      "key" : "${swiftKey}"
+    }
+    <% } else { %>
+    "gridfs" : {
+      <% if (seeds != null && !seeds.trim().isEmpty()) { %>
+      "seeds": ${seeds},
+      <% } %>
+      "host": "${mongoHost}",
+      "port": ${mongoPort},
+      "db_name": "${dbName}",
+      "pool_size": 10
+    }
+    <% } %>
+  }
+},
+{
+  "name": "fr.wseduc~mod-zip~2.0.0",
+  "waitDeploy" : true,
+  "worker": true,
+  "config":{
+    "address": "entcore.zipper"
+  }
+},
+{
+  "name": "fr.wseduc~mod-postgresql~1.0.0",
+  "waitDeploy" : true,
+  "worker": true,
+  "multi-threaded" : true,
+  "config":{
+    "address" : "sql.persistor",
+    "url" : "${sqlUrl}",
+    "username" : "${sqlUsername}",
+    "password" : "${sqlPassword}"
+  }
+},
+{
+  "name": "com.opendigitaleducation~mod-json-schema-validator~1.0.0",
+  "waitDeploy" : true,
+  "worker": true,
+  "multi-threaded" : true,
+  "config":{
+  }
+},
+<% if (webdavHost != null && !webdavHost.trim().isEmpty()) { %>
+{
+  "name": "fr.wseduc~mod-webdav~1.0.0",
+  "config": {
+    "address" : "webdav"
+    <% if ("true".equals(webdavCredential)) { %>
+    ,
+    "credentials" : {
+      "${webdavHost}" : {
+        "username" : "${webdavUsername}",
+        "password" : "${webdavPassword}",
+        "insecure" : ${webdavInsecure}
+      }
+    }
+    <% } %>
+    }
+  },
+<% } %>
+{
+  "name": "fr.wseduc~mod-sms-proxy~1.0.0",
+  "waitDeploy" : true,
+  "worker": true,
+  "config":{
+    "address" : "entcore.sms",
+    "providers" : ${smsProviders}
+  }
+},
+{
+  "name": "fr.wseduc~mod-pdf-generator~1.0.0",
+  "waitDeploy" : true,
+  "worker": true,
+  "config":{
+    "address" : "entcore.pdf.generator"
+  }
+},
+{ "name": "org.entcore~infra~${entcoreVersion}",
+"waitDeploy" : true,
+"config" : {
+  "port": 8001,
+  "mode": "${mode}",
+  "auto-redeploy": false,
+  "path-prefix": "infra",
+  "sql": true,
+  <% if (signKey != null && !signKey.trim().isEmpty()) { %>
+  "key": "${signKey}",
+  <% } %>
+  <% if (contentSecurityPolicy != null && !contentSecurityPolicy.trim().isEmpty()) { %>
+  "content-security-policy": "${contentSecurityPolicy}",
+  <% } %>
+  "cluster" : ${cluster},
+  "skins": ${skins},
+  <% if (swiftUri != null && !swiftUri.trim().isEmpty()) { %>
+    "swift" : {
+      "uri" : "${swiftUri}",
+      "container" : "${swiftContainer}",
+      "user" : "${swiftUser}",
+      "key" : "${swiftKey}"
+    },
+    <% } else if (fsStoragePath != null && !fsStoragePath.trim().isEmpty()) { %>
+    "file-system" : {
+      "path" : "${fsStoragePath}",
+      "flat" : ${flatFsStorage}
+    },
+    <% } else { %>
+    "gridfs-address" : "wse.gridfs.persistor",
+    <% } %>
+    <% if (sharedConf != null && !sharedConf.trim().isEmpty()) { %>
+    "sharedConf": ${sharedConf},
+    <% } %>
+    <% if (emailConfig != null && !emailConfig.trim().isEmpty()) { %>
+    "emailConfig": ${emailConfig},
+    <% } else { %>
+    "emailConfig": {
+      "email": "${senderEmail}",
+      "host": "${host}"
+    },
+    <% } %>
+    "eventConfig": {
+     "user-blacklist" : []
+    },
+    "neo4jConfig" : {
+      <% if (serverUris != null && !serverUris.trim().isEmpty()) { %>
+      "server-uris": ${serverUris},
+      <% } else { %>
+      "server-uri": "${neo4jUri}/db/data/",
+      <% } %>
+      "slave-readonly": $neo4jSlaveReadOnly,
+      "legacy-indexes" : [{ "for" : "node", "name" : "node_auto_index", "type" : "fulltext" }]
+    }
+  }},
+
+  {
+    "name": "org.entcore~app-registry~${entcoreVersion}",
+    "waitDeploy" : true,
+    "config":{
+      "main":"org.entcore.registry.AppRegistry",
+      "auto-redeploy": false,
+      "csrf-token" : $csrfToken,
+      "mode": "${mode}",
+      "ssl" : $ssl,
+      "address" : "wse.app.registry",
+      "port" : 8012,
+      "publicConf": {
+        <% if ("true".equals(xitiSwitch)) { %>
+          "xiti": {
+            "ID_SERVICE": {
+              "default": "",
+              "/admin-console": ""
+            }
+          }
+        <% } %>
+      }
+    }
+  },
+    {
+      "name": "org.entcore~session~${entcoreVersion}",
+      "worker": true,
+      "config":{
+        "session_timeout": 10800000,
+        "address" : "wse.session"
+      }
+    },
+    {
+      "name": "org.entcore~auth~${entcoreVersion}",
+      "config":{
+        "path-prefix": "auth",
+        "port": 8009,
+        "auto-redeploy": false,
+        "ssl" : $ssl,
+        "mode": "${mode}",
+        "email": "${senderEmail}",
+        "mandatory": ${authMandatoryFields},
+        "activationAutoLogin" : $activationAutoLogin,
+        "teacherForgotPasswordEmail" : $teacherForgotPasswordEmail,
+        <% if (openidconnectFederate != null && !openidconnectFederate.trim().isEmpty()) { %>
+        "openid-federate" : ${openidconnectFederate},
+        "slo": ${samlSLO},
+        <% } %>
+        <% if (samlMetadataFolder != null && !samlMetadataFolder.trim().isEmpty()) { %>
+        "saml-metadata-folder" : "${samlMetadataFolder}",
+        "saml-private-key": "${samlPrivateKey}",
+        "saml-services-providers" : ${samlServicesProviders},
+        "saml-issuer": "${samlIssuer}",
+        "check-federated-login" : true,
+        "slo": ${samlSLO},
+        "loginUri":"${federationLoginUri}",
+        "callbackParam":"${federationCallBackParam}",
+        <% } %>
+        "authenticationServer": {
+          "loginURL": "/auth/login",
+          "logoutURL": "/auth/logout",
+          "loginCallback": "",
+          "logoutCallback": ""
+        },
+        "passwordRegex" : "${passwordRegex}",
+        "host": "${host}"
+      }
+    },
+    {
+      "name": "org.entcore~directory~${entcoreVersion}",
+      "config":{
+        "path-prefix": "directory",
+        "auto-redeploy": false,
+        "ssl" : $ssl,
+        "mode": "${mode}",
+        "host": "${host}",
+        "csrf-token" : $csrfToken,
+        "port": 8003,
+        "email": "${senderEmail}",
+        "app-name": "Directory",
+        "workspace-url": "localhost",
+        "workspace-port":8011,
+        "workspace-prefix" : "/workspace",
+        "activation-welcome-message" : $activationWelcomeMessage,
+        "createdUserEmail" : $createdUserEmail,
+        "classDefaultRoles" : $classDefaultRoles,
+        "user-book-data":{
+          "default-theme":"default",
+          "default-avatar": "no-avatar.jpg",
+          "default-mood" : "default",
+          "hobbies": ["sport","cinema", "animals", "music", "places", "books"]
+        },
+        "publicConf": {
+           "feeders" : $wizardFeeders
+           <% if (federatedAddress != null && !federatedAddress.trim().isEmpty()) { %>
+           ,"federatedAddress" : ${federatedAddress}
+           <% } %>
+           <% if ("true".equals(xitiSwitch)) { %>
+             ,"xiti": {
+               "ID_SERVICE": {
+                 "default": 10,
+                 "/userbook/mon-compte": "",
+                 "/admin-console": ""
+               }
+             }
+           <% } %>
+        }
+      }
+    },
+    {
+      "name": "org.entcore~workspace~${entcoreVersion}",
+      "config":{
+        "main":"org.entcore.workspace.Workspace",
+        "auto-redeploy": false,
+        "csrf-token" : $csrfToken,
+        "mode": "${mode}",
+        "ssl" : $ssl,
+        "host": "${host}",
+        "neo4jPlugin" : ${neo4jPlugin},
+        "userbook-host": "${host}",
+        "app-name": "Espace documentaire",
+        "app-address": "/workspace/workspace",
+        "app-icon": "workspace-large",
+        "port": 8011,
+        "wsPort" : 6502,
+        "mongo-address" : "wse.mongodb.persistor",
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 1
+              }
+            }
+          <% } %>
+        }
+      }
+    },
+    {
+      "name": "org.entcore~communication~${entcoreVersion}",
+      "config":{
+        "main":"org.entcore.communication.Communication",
+        "auto-redeploy": false,
+        "ssl" : $ssl,
+        "csrf-token" : $csrfToken,
+        "mode": "${mode}",
+        "port": 8015,
+        "address" : "wse.communication",
+        "initDefaultCommunicationRules" :
+         <% if (defaultCommunicationRules != null && !defaultCommunicationRules.trim().isEmpty()) { %>
+            ${defaultCommunicationRules}
+         <% } else { %>
+            {
+              "Structure-Personnel" : {
+                "users" : "BOTH", "communiqueWith" : ["Structure-Teacher", "Structure-Relative", "Structure-Student"]
+              },
+              "Structure-Teacher" : {
+                "users" : "BOTH", "communiqueWith" : ["Structure-Personnel", "Structure-Relative", "Structure-Student"]
+              },
+              "Structure-Student" : {"users" : "OUTGOING"},
+              "Structure-Relative" : {"users" : "OUTGOING"},
+              "Class-Personnel" : {"users" : "OUTGOING"},
+              "Class-Teacher" : {"users" : "OUTGOING"},
+              "Class-Student" : {
+                "users" : "BOTH", "communiqueWith" : ["Class-Personnel", "Class-Teacher"]
+              },
+              "Class-Relative" : {
+                "users" : "BOTH", "Relative-Student" : "INCOMING", "communiqueWith" : ["Class-Personnel", "Class-Student", "Class-Teacher"]
+              }
+            }
+         <% } %>,
+       "publicConf": {
+         <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": "",
+                "/admin-console": ""
+              }
+            }
+          <% } %>
+        }
+      }
+    },
+    {
+      "name": "org.entcore~portal~${entcoreVersion}",
+      "config":{
+        "port": 8017,
+        "auto-redeploy": false,
+        "ssl" : $ssl,
+        "csrf-token" : $csrfToken,
+        "mode": "${mode}",
+        <% if (assetsPath != null && !assetsPath.trim().isEmpty()) { %>
+           "assets-path": "${assetsPath}",
+        <% } %>
+        "path-prefix": "",
+                "root-page": "/timeline/timeline",
+        "urls": {
+          "userbook": "/userbook",
+          "auth": "/auth",
+          "portal": "/",
+          <% if (logoutCallback != null && !logoutCallback.trim().isEmpty()) { %>
+          "logoutCallback": "${logoutCallback}"
+          <% } else { %>
+          "logoutCallback": "/"
+          <% } %>
+        },
+        "admin-urls": [
+          {"name": "directory", "url": "/directory/admin-console"},
+          {"name": "appRegistry", "url": "/appregistry/admin-console"},
+          {"name": "communication", "url": "/communication/admin-console"},
+          {"name": "wizard", "url": "/directory/wizard"},
+          {"name": "timeline.history", "url": "/timeline/admin-history"},
+          {"name": "timeline", "url": "/timeline/admin-console", "allowed": ["SUPER_ADMIN"]},
+          {"name": "welcomeMessage", "url": "/auth/admin-welcome-message", "allowed": ["SUPER_ADMIN"]},
+          {"name": "flashMessage", "url": "/timeline/flashmsg/admin", "allowed": ["SUPER_ADMIN"]},
+          {"name": "embed", "url": "/infra/embed/admin", "allowed": ["SUPER_ADMIN"]}
+          <% if ("true".equals(xitiSwitch)) { %>
+          ,{"name": "xiti", "url": "/xiti/admin-console", "allowed": ["SUPER_ADMIN"]}
+          <% } %>
+          <% if ("true".equals(keyring)) { %>
+          ,{"name": "keyring", "url": "/sso/keyring/admin-console", "allowed": ["SUPER_ADMIN"]}
+          <% } %>
+          <% if ("true".equals(edtudt)) { %>
+          ,{"name": "edtudt", "url": "/directory/timetable"}
+          <% } %>
+
+        ],
+        "widgets": [
+          <% if (widgets != null && !widgets.trim().isEmpty()) { %>
+             ${widgets}
+          <% } else { %>
+           {
+             "name": "notes",
+             "path": "/public/template/notes.html",
+             "js": "/public/js/notes.js"
+           },
+           {
+             "name": "calendar",
+             "path": "/public/template/calendar.html",
+             "js": "/public/js/calendar.js"
+           }
+          <% } %>
+        ],
+            "resources-applications": [
+              ${resourcesApplications}
+            ]
+      }
+    },
+    {
+      "name": "org.entcore~conversation~${entcoreVersion}",
+      "config":{
+        "main":"org.entcore.conversation.Conversation",
+        "host": "${host}",
+        "mode": "${mode}",
+        "csrf-token" : $csrfToken,
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "app-address": "/conversation/conversation",
+        "port": 8019,
+        "app-name" : "Messagerie",
+        "app-icon" : "conversation-large",
+        "sql": true,
+        "db-schema": "conversation",
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 10
+              }
+            }
+          <% } %>
+        }
+      }
+    },
+    {
+      "name": "org.entcore~feeder~${entcoreVersion}",
+      "worker": true,
+      "config":{
+        "address" : "entcore.feeder",
+        "neo4j-address" : "wse.neo4j.persistor",
+        "apply-communication-rules" : $applycommunication,
+        "import-files" : "${importDirectory}",
+        "feeder" : "${feeder}",
+        "mode" : "${mode}",
+        <% if (edt != null && !edt.trim().isEmpty()) { %>
+        "edt": ${edt},
+        <% } %>
+        <% if (udt != null && !udt.trim().isEmpty()) { %>
+        "udt": ${udt},
+        <% } %>
+        "auto-export" : ${autoExport},
+        "exclude-mark-duplicates-by-source" : ["CSV"],
+        "exporter" : "${exporter}",
+        "export-path" : "${exportPath}",
+        "export-destination" : "${exportDestination}"
+      }
+    },
+    {
+      "name": "org.entcore~timeline~${entcoreVersion}",
+      "config":{ "csrf-token": true,
+        "main":"org.entcore.timeline.Timeline",
+        "port": 8016,
+        "app-name": "Timeline",
+        "app-address": "/timeline/timeline",
+        "address" : "wse.timeline",
+        "auto-redeploy": false,
+        "ssl" : $ssl,
+        "host": "${host}",
+        "antiFloodClear": 60000,
+        "sql": true,
+        "db-schema": "flashmsg",
+        "mode": "${mode}"
+      }
+    },
+    {
+      "name": "org.entcore~cas~${entcoreVersion}",
+      "config":{
+        "main" : "org.entcore.cas.Cas",
+        "port" : 8023,
+        "app-name" : "Cas",
+        "app-address" : "/cas",
+        "app-icon" : "cas-large",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "external-login-uri" : "${casExternalLoginUri}",
+        "integration-mode" : "HTTP",
+        "app-registry.port" : 8012,
+        "mode" : "${mode}",
+        "entcore.port" : 8009,
+        "services" : [
+          {
+            "class" : "org.entcore.cas.services.EliotRegisteredService",
+            "principalAttributeName" : "externalId",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.PronoteRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.KneRegisteredService",
+            "principalAttributeName" : "externalId",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.LeSiteTvRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.UniversalisRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.WebclasseursRegisteredService",
+            "principalAttributeName" : "externalId",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.UidRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.ProEPSRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.EducagriRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.EduMediaRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.GepiRegisteredService",
+            "principalAttributeName" : "externalId",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.MSELRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.GRRRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.LabomepRegisteredService",
+            "principalAttributeName" : "externalId",
+            "patterns" : []
+          },
+          {
+            "class" : "org.entcore.cas.services.DefaultRegisteredService",
+            "principalAttributeName" : "login",
+            "patterns" : [${patternDefaultRegisteredService}]
+          }
+        ]
+      }
+    },
+    {
+      "name": "org.entcore~archive~${entcoreVersion}",
+      "config":{
+        "main":"org.entcore.archive.Archive",
+        "port": 8004,
+        "mode": "${mode}",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "email": "${senderEmail}",
+        "auto-redeploy": false,
+        "app-name" : "Archive",
+        "app-address" : "/archive",
+        "app-icon" : "archive-large",
+        "expected-exports" : ["workspace"]
+      }
+    },
+    {
+      "name": "org.entcore~admin~${entcoreVersion}",
+      "config": {
+        "main":"org.entcore.admin.Admin",
+        "port": 8089,
+        "csrf-token" : $csrfToken,
+        "ssl" : $ssl,
+        "mode": "${mode}",
+        "auto-redeploy": false,
+        "host" : "${host}",
+        "app-name" : "Admin",
+        "app-address" : "/admin",
+        "app-icon" : "admin-large"
+      }
+    }
+,
+    {
+      "name": "net.atos~actualites~1.1.2",
+      "config": {
+        "main" : "net.atos.entng.actualites.Actualites",
+        "port" : 8022,
+		"sql" : true,
+        "mongodb" : true,
+        "app-name" : "Actualites",
+        "app-address" : "/actualites",
+        "app-icon" : "actualites-large",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "integration-mode" : "HTTP",
+        "app-registry.port" : 8012,
+        "mode" : "${mode}",
+        "entcore.port" : 8009,
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": ""
+              }
+            }
+          <% } %>
+        }
+      }
+    }
+,
+{
+  "name": "org.entcore~blog~2.1.3",
+    "config": {
+      "main":"org.entcore.blog.Blog",
+      "port": 8018,
+      "address" : "wse.blog",
+      "auto-redeploy": false,
+      "ssl" : $ssl,
+      "app-name" : "Blog",
+      "app-address" : "/blog",
+      "host": "${host}",
+      "userbook-host": "${host}",
+      "mode": "${mode}",
+      "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 2
+              }
+            }
+          <% } %>
+        }
+    }
+}
+,
+{
+  "name": "net.atos~bookmark~1.1.0",
+  "config": {
+    "main" : "net.atos.entng.bookmark.Bookmark",
+    "port" : 8032,
+    "app-name" : "Signets",
+    "app-address" : "/bookmark",
+    "app-icon" : "bookmark-large",
+    "host": "${host}",
+    "ssl" : $ssl,
+    "auto-redeploy": false,
+    "userbook-host": "${host}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "${mode}",
+    "entcore.port" : 8009
+  }
+}
+,
+{
+      "name": "net.atos~calendar~1.1.1",
+      "config": {
+        "main" : "net.atos.entng.calendar.Calendar",
+        "port" : 8098,
+        "app-name" : "Calendar",
+        "app-address" : "/calendar",
+        "app-icon" : "calendar-large",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "userbook-host": "${host}",
+        "integration-mode" : "HTTP",
+        "app-registry.port" : 8012,
+        "mode" : "${mode}",
+        "entcore.port" : 8009,
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 7
+              }
+            }
+          <% } %>
+        }
+      }
+}
+,
+{
+  "name": "net.atos~collaborative-editor~1.1.1",
+  "config": {
+    "main" : "net.atos.entng.collaborativeeditor.CollaborativeEditor",
+    "port" : 8668,
+    "app-name" : "Collaborative Editor",
+    "app-address" : "/collaborativeeditor",
+    "app-icon" : "pad-large",
+    "host": "${host}",
+    "ssl" : $ssl,
+    "userbook-host": "${host}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "${mode}",
+    "etherpad-domain": "ip-51-255-66.eu",
+    "etherpad-url": "http://ns3027012.ip-51-255-66.eu:8092",
+    "etherpad-api-key" : "62cc0a3507b8ab13b3f641a07f93138d59880071af0e10f84d0f9e1937c76e97",
+    "entcore.port" : 8009,
+    "publicConf": {
+      <% if ("true".equals(xitiSwitch)) { %>
+        "xiti": {
+          "ID_SERVICE": {
+            "default": 17
+          }
+        }
+      <% } %>
+    }
+  }
+}
+,
+  	{
+      "name": "net.atos~collaborativewall~1.1.2",
+      "config": {
+        "main" : "net.atos.entng.collaborativewall.CollaborativeWall",
+        "port" : 8071,
+        "app-name" : "CollaborativeWall",
+        "app-address" : "/collaborativewall",
+        "app-icon" : "collaborative-wall-large",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "userbook-host": "${host}",
+        "integration-mode" : "HTTP",
+        "app-registry.port" : 8012,
+        "mode" : "${mode}",
+        "entcore.port" : 8009,
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 2
+              }
+            }
+          <% } %>
+        }
+      }
+    }
+,
+    {
+      "name": "net.atos~community~1.1.0",
+      "config": {
+        "main" : "net.atos.entng.community.Community",
+        "port" : 8078,
+        "mongodb" : true,
+        "app-name" : "Community",
+        "app-address" : "/community",
+        "app-icon" : "community-large",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "mode" : "${mode}",
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 2
+              }
+            }
+          <% } %>
+        }
+      }
+    }
+,
+    {
+      "name": "fr.openent~competences~1.1.3",
+      "config": {
+        "main" : "fr.openent.competences.Competences",
+        "port" : 8129,
+        "app-name" : "Competences",
+    	"app-address" : "/competences",
+    	"app-icon" : "competences",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "integration-mode" : "HTTP",
+        "app-registry.port" : 8012,
+        "mode" : "${mode}",
+        "entcore.port" : 8009,
+        "db-schema": "notes",
+        "vsco-schema": "viesco",
+        "sql": true,
+        "lsun": {
+            "xsd_path": "./public/lsun/import-complet-strict.xsd",
+            "civilite_regex" : "^[Mm][^mM]*[Mm][^mM]*\$"
+        },
+        "exports" : {
+           "template-path" : "./public/template/pdf/"
+        },
+        "transition" : {
+           "timeout-transaction" : 600
+        }
+      }
+    }
+,
+    {
+  		"name": "net.atos~forum~1.1.3",
+  		"config": {
+  		  "main" : "net.atos.entng.forum.Forum",
+  		  "port" : 8024,
+  		  "app-name" : "Forum",
+  		  "app-address" : "/forum",
+  		  "app-icon" : "forum-large",
+  		  "host": "${host}",
+  		  "ssl" : $ssl,
+  		  "auto-redeploy": false,
+  		  "userbook-host": "${host}",
+  		  "integration-mode" : "HTTP",
+  		  "app-registry.port" : 8012,
+  		  "mode" : "${mode}",
+  		  "entcore.port" : 8009,
+          "publicConf": {
+            <% if ("true".equals(xitiSwitch)) { %>
+              "xiti": {
+                "ID_SERVICE": {
+                  "default": 2
+                }
+              }
+            <% } %>
+          }
+  		}
+	  }
+,
+{
+  "name": "net.atos~mindmap~1.1.2",
+  "config": {
+    "main" : "net.atos.entng.mindmap.Mindmap",
+    "port" : 8666,
+    "auto-redeploy": false,
+    "app-name" : "Mindmap",
+    "app-address" : "/mindmap",
+    "app-icon" : "mindmap-large",
+    "host": "${host}",
+    "ssl" : $ssl,
+    "userbook-host": "${host}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "${mode}",
+    "entcore.port" : 8009,
+    "publicConf": {
+      <% if ("true".equals(xitiSwitch)) { %>
+        "xiti": {
+          "ID_SERVICE": {
+            "default": 17
+          }
+        }
+      <% } %>
+    }
+  }
+}
+,
+    {
+      "name": "fr.wseduc~pages~1.1.3",
+      "config": {
+        "main" : "fr.wseduc.pages.Pages",
+        "port" : 8025,
+        "app-name" : "Pages",
+        "app-address" : "/pages",
+        "app-icon" : "pages-large",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "integration-mode" : "HTTP",
+        "mode" : "${mode}",
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 2
+              }
+            }
+          <% } %>
+        }
+      }
+    }
+,
+    {
+      "name": "fr.openent~presences~1.0.0",
+      "config": {
+        "main" : "fr.openent.presences.Presences",
+        "port" : 8062,
+        "app-name" : "Presences",
+    	"app-address" : "/presences",
+    	"app-icon" : "absences",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "integration-mode" : "HTTP",
+        "app-registry.port" : 8012,
+        "mode" : "${mode}",
+        "sql": true,
+        "exports" : {
+            "template-path" : "./public/template/pdf/"
+        },
+        "entcore.port" : 8009
+      }
+    }
+,
+{
+  "name": "fr.wseduc~rack~1.1.1",
+    "config": {
+      "main":"org.wseduc.rack.Rack",
+      "port": 8031,
+      "auto-redeploy": false,
+      "app-name" : "Rack",
+      "app-address" : "/rack",
+      "app-icon" : "rack-large",
+      "app-displayName" : "Rack",
+      "host": "${host}",
+      "ssl" : $ssl,
+      "userbook-host": "${host}",
+      "integration-mode" : "HTTP",
+      "app-registry.port" : 8012,
+      "mode" : "${mode}",
+      "entcore.port" : 8009,
+      "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 1
+              }
+            }
+          <% } %>
+        }
+    }
+}
+,
+    {
+      "name": "net.atos~rbs~1.1.1",
+      "config": {
+        "main" : "net.atos.entng.rbs.Rbs",
+        "port" : 8026,
+        "sql" : true,
+        "mongodb" : true,
+        "neo4j" : true,
+        "app-name" : "Réservation de ressources",
+        "app-address" : "/rbs",
+        "app-icon" : "rbs-large",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "integration-mode" : "HTTP",
+        "mode" : "${mode}",
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 12
+              }
+            }
+          <% } %>
+        }
+      }
+    }
+,
+  	{
+  		"name": "net.atos~rss~1.1.0",
+  		"config": {
+  		  "main" : "net.atos.entng.rss.Rss",
+  		  "port" : 8028,
+  		  "app-name" : "Rss",
+  		  "app-address" : "/rss",
+  		  "app-icon" : "rss-large",
+  		  "host": "${host}",
+  		  "ssl" : $ssl,
+  		  "auto-redeploy": false,
+  		  "userbook-host": "${host}",
+  		  "integration-mode" : "HTTP",
+  		  "app-registry.port" : 8012,
+  		  "mode" : "${mode}",
+  		  "entcore.port" : 8009
+  		}
+  	}
+,
+{
+  "name": "net.atos~timelinegenerator~1.1.4",
+  "config": {
+    "main" : "net.atos.entng.timelinegenerator.TimelineGenerator",
+    "port" : 8099,
+    "app-name" : "TimelineGenerator",
+    "app-address" : "/timelinegenerator",
+    "app-icon" : "timelinegenerator-large",
+    "host": "${host}",
+    "ssl" : $ssl,
+    "userbook-host": "${host}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "${mode}",
+    "entcore.port" : 8009,
+    "publicConf": {
+      <% if ("true".equals(xitiSwitch)) { %>
+        "xiti": {
+          "ID_SERVICE": {
+            "default": 17
+          }
+        }
+      <% } %>
+    }
+  }
+}
+,
+    {
+      "name": "net.atos~wiki~1.1.2",
+      "config": {
+        "main" : "net.atos.entng.wiki.Wiki",
+        "port" : 8030,
+        "app-name" : "Wiki",
+        "app-address" : "/wiki",
+        "app-icon" : "wiki-large",
+        "host": "${host}",
+        "ssl" : $ssl,
+        "auto-redeploy": false,
+        "userbook-host": "${host}",
+        "integration-mode" : "HTTP",
+        "mode" : "${mode}",
+        "publicConf": {
+          <% if ("true".equals(xitiSwitch)) { %>
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 2
+              }
+            }
+          <% } %>
+        }
+      }
+    }
+<% if ("true".equals(httpProxy)) { %>
+    ,{
+      "name": "fr.wseduc~http-proxy~2.0.0",
+      "config": {
+        "port": 8090,
+        "proxies": [
+          {
+            "location": "/",
+            "proxy_pass": "http://localhost:8017"
+          },
+          {
+            "location": "/infra",
+            "proxy_pass": "http://localhost:8001"
+          },
+          {
+            "location": "/directory",
+            "proxy_pass": "http://localhost:8003"
+          },
+          {
+            "location": "/auth",
+            "proxy_pass": "http://localhost:8009"
+          },
+          {
+            "location": "/workspace",
+            "proxy_pass": "http://localhost:8011"
+          },
+          {
+            "location": "/appregistry",
+            "proxy_pass": "http://localhost:8012"
+          },
+          {
+            "location": "/communication",
+            "proxy_pass": "http://localhost:8015"
+          },
+          {
+            "location": "/userbook",
+            "proxy_pass": "http://localhost:8003"
+          },
+          {
+            "location": "/conversation",
+            "proxy_pass": "http://localhost:8019"
+          },
+          {
+            "location": "/timeline",
+            "proxy_pass": "http://localhost:8016"
+          },
+          {
+            "location": "/cas",
+            "proxy_pass": "http://localhost:8023"
+          },
+          {
+            "location": "/archive",
+            "proxy_pass": "http://localhost:8004"
+          },
+          {
+            "location": "/admin",
+            "proxy_pass": "http://localhost:8089"
+          }
+,
+          {
+            "location": "/actualites",
+            "proxy_pass": "http://localhost:8022"
+          },
+          {
+            "location": "/blog",
+            "proxy_pass": "http://localhost:8018"
+          },
+          {
+            "location": "/bookmark",
+            "proxy_pass": "http://localhost:8032"
+          },
+          {
+            "location": "/calendar",
+            "proxy_pass": "http://localhost:8098"
+          },
+          {
+            "location": "/collaborativeeditor",
+            "proxy_pass": "http://localhost:8668"
+          },
+          {
+            "location": "/collaborativewall",
+            "proxy_pass": "http://localhost:8071"
+          },
+          {
+            "location": "/community",
+            "proxy_pass": "http://localhost:8078"
+          },
+          {
+            "location": "/competences",
+            "proxy_pass": "http://localhost:8129"
+          },
+          {
+            "location": "/forum",
+            "proxy_pass": "http://localhost:8024"
+          },
+          {
+            "location": "/mindmap",
+            "proxy_pass": "http://localhost:8666"
+          },
+          {
+            "location": "/pages",
+            "proxy_pass": "http://localhost:8025"
+          },
+          {
+            "location": "/presences",
+            "proxy_pass": "http://localhost:8062"
+          },
+          {
+            "location": "/rack",
+            "proxy_pass": "http://localhost:8031"
+          },
+          {
+            "location": "/rbs",
+            "proxy_pass": "http://localhost:8026"
+          },
+          {
+            "location": "/rss",
+            "proxy_pass": "http://localhost:8028"
+          },
+          {
+            "location": "/timelinegenerator",
+            "proxy_pass": "http://localhost:8099"
+          },
+          {
+            "location": "/wiki",
+            "proxy_pass": "http://localhost:8030"
+          }        ]
+      }
+    }
+<% } %>  ]
+}
