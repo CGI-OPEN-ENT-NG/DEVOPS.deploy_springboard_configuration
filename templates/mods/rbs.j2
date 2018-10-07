@@ -1,0 +1,28 @@
+{
+  "name": "net.atos~rbs~{{ rbsVersion }}",
+  "config": {
+    "main" : "net.atos.entng.rbs.Rbs",
+    "port" : 8026,
+    "sql" : true,
+    "mongodb" : true,
+    "neo4j" : true,
+    "app-name" : "Réservation de ressources",
+    "app-address" : "/rbs",
+    "app-icon" : "rbs-large",
+    "host": "{{ host }}",
+    "ssl" : {{ ssl }},
+    "auto-redeploy": false,
+    "userbook-host": "{{ host }}",
+    "integration-mode" : "HTTP",
+    "mode" : "{{ mode }}",
+    "publicConf": {
+      {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+        "xiti": {
+          "ID_SERVICE": {
+            "default": 12
+          }
+        }
+      {% endif %}
+    }
+  }
+}

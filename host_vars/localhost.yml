@@ -86,6 +86,8 @@ neo4jSlaveReadOnly: 'false'
 csrfToken: 'true'
 wizardFeeders: '["CSV"]'
 casExternalLoginUri:
+etherpadUrl: http://ns3027012.ip-51-255-66.eu:8092
+etherpadApiKey: 62cc0a3507b8ab13b3f641a07f93138d59880071af0e10f84d0f9e1937c76e97
 # E.g. your domain name
 #modowner: fr.wseduc
 

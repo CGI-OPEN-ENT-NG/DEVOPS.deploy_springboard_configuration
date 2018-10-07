@@ -1,0 +1,27 @@
+{
+  "name": "net.atos~mindmap~{{ mindmapVersion }}",
+  "config": {
+    "main" : "net.atos.entng.mindmap.Mindmap",
+    "port" : 8666,
+    "auto-redeploy": false,
+    "app-name" : "Mindmap",
+    "app-address" : "/mindmap",
+    "app-icon" : "mindmap-large",
+    "host": "{{ host }}",
+    "ssl" : {{ ssl }},
+    "userbook-host": "{{ host }}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "{{ mode }}",
+    "entcore.port" : 8009,
+    "publicConf": {
+      {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+        "xiti": {
+          "ID_SERVICE": {
+            "default": 17
+          }
+        }
+      {% endif %}
+    }
+  }
+}

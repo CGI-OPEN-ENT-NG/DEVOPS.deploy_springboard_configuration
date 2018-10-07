@@ -1,0 +1,31 @@
+{
+  "name": "fr.openent~competences~{{ competencesVersion }}",
+  "config": {
+    "main" : "fr.openent.competences.Competences",
+    "port" : 8129,
+    "app-name" : "Competences",
+    "app-address" : "/competences",
+    "app-icon" : "competences",
+    "host": "{{ host }}",
+    "ssl" : {{ ssl }},
+    "auto-redeploy": false,
+    "userbook-host": "{{ host }}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "{{ mode }}",
+    "entcore.port" : 8009,
+    "db-schema": "notes",
+    "vsco-schema": "viesco",
+    "sql": true,
+    "lsun": {
+        "xsd_path": "./public/lsun/import-complet-strict.xsd",
+        "civilite_regex" : "^[Mm][^mM]*[Mm][^mM]*\$"
+    },
+    "exports" : {
+        "template-path" : "./public/template/pdf/"
+    },
+    "transition" : {
+        "timeout-transaction" : 600
+    }
+  }
+}

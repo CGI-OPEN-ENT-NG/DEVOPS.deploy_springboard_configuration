@@ -1,0 +1,29 @@
+{
+  "name": "net.atos~collaborative-editor~{{ collaborativeEditorVersion }}",
+  "config": {
+    "main" : "net.atos.entng.collaborativeeditor.CollaborativeEditor",
+    "port" : 8668,
+    "app-name" : "Collaborative Editor",
+    "app-address" : "/collaborativeeditor",
+    "app-icon" : "pad-large",
+    "host": "{{ host }}",
+    "ssl" : {{ ssl }},
+    "userbook-host": "{{ host }}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "{{ mode }}",
+    "etherpad-domain": "ip-51-255-66.eu",
+    "etherpad-url": "{{ etherpadUrl }}",
+    "etherpad-api-key" : "{{ etherpadApiKey }}",
+    "entcore.port" : 8009,
+    "publicConf": {
+      {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+        "xiti": {
+          "ID_SERVICE": {
+            "default": 17
+          }
+        }
+      {% endif %}
+    }
+  }
+}
