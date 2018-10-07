@@ -1,0 +1,28 @@
+{
+  "name": "org.entcore~workspace~{{ entcoreVersion }}",
+  "config":{
+    "main":"org.entcore.workspace.Workspace",
+    "auto-redeploy": false,
+    "csrf-token" : {{ csrfToken }},
+    "mode": "{{ mode }}",
+    "ssl" : {{ ssl }},
+    "host": "{{ host }}",
+    "neo4jPlugin" : {{ neo4jPlugin }},
+    "userbook-host": "{{ host }}",
+    "app-name": "Espace documentaire",
+    "app-address": "/workspace/workspace",
+    "app-icon": "workspace-large",
+    "port": 8011,
+    "wsPort" : 6502,
+    "mongo-address" : "wse.mongodb.persistor",
+    "publicConf": {
+      {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+        "xiti": {
+          "ID_SERVICE": {
+            "default": 1
+          }
+        }
+      {% endif %}
+    }
+  }
+}

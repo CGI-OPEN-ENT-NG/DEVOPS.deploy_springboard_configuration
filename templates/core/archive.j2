@@ -1,0 +1,16 @@
+{
+  "name": "org.entcore~archive~{{ entcoreVersion }}",
+  "config":{
+    "main":"org.entcore.archive.Archive",
+    "port": 8004,
+    "mode": "{{ mode }}",
+    "host": "{{ host }}",
+    "ssl" : {{ ssl }},
+    "email": "{{ senderEmail }}",
+    "auto-redeploy": false,
+    "app-name" : "Archive",
+    "app-address" : "/archive",
+    "app-icon" : "archive-large",
+    "expected-exports" : ["workspace"]
+  }
+}

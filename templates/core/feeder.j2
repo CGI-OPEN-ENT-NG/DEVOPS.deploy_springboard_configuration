@@ -1,0 +1,23 @@
+{
+  "name": "org.entcore~feeder~{{ entcoreVersion }}",
+  "worker": true,
+  "config":{
+    "address" : "entcore.feeder",
+    "neo4j-address" : "wse.neo4j.persistor",
+    "apply-communication-rules" : {{ applycommunication }},
+    "import-files" : "{{ importDirectory }}",
+    "feeder" : "{{ feeder }}",
+    "mode" : "{{ mode }}",
+    {% if edt is defined and edt %}
+    "edt": {{ edt }},
+    {% endif %}
+    {% if udt is defined and udt %}
+    "udt": {{ udt }},
+    {% endif %}
+    "auto-export" : {{ autoExport }},
+    "exclude-mark-duplicates-by-source" : ["CSV"],
+    "exporter" : "{{ exporter }}",
+    "export-path" : "{{ exportPath }}",
+    "export-destination" : "{{ exportDestination }}"
+  }
+}

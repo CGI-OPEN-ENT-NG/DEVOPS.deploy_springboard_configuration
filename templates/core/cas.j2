@@ -1,0 +1,96 @@
+{
+  "name": "org.entcore~cas~{{ entcoreVersion }}",
+  "config":{
+    "main" : "org.entcore.cas.Cas",
+    "port" : 8023,
+    "app-name" : "Cas",
+    "app-address" : "/cas",
+    "app-icon" : "cas-large",
+    "host": "{{ host }}",
+    "ssl" : {{ ssl }},
+    "auto-redeploy": false,
+    "userbook-host": "{{ host }}",
+    "external-login-uri" : "{{ casExternalLoginUri }}",
+    "integration-mode" : "HTTP",
+    "app-registry.port" : 8012,
+    "mode" : "{{ mode }}",
+    "entcore.port" : 8009,
+    "services" : [
+      {
+        "class" : "org.entcore.cas.services.EliotRegisteredService",
+        "principalAttributeName" : "externalId",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.PronoteRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.KneRegisteredService",
+        "principalAttributeName" : "externalId",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.LeSiteTvRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.UniversalisRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.WebclasseursRegisteredService",
+        "principalAttributeName" : "externalId",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.UidRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.ProEPSRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.EducagriRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.EduMediaRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.GepiRegisteredService",
+        "principalAttributeName" : "externalId",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.MSELRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.GRRRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.LabomepRegisteredService",
+        "principalAttributeName" : "externalId",
+        "patterns" : []
+      },
+      {
+        "class" : "org.entcore.cas.services.DefaultRegisteredService",
+        "principalAttributeName" : "login",
+        "patterns" : [{{ patternDefaultRegisteredService }}]
+      }
+    ]
+  }
+}

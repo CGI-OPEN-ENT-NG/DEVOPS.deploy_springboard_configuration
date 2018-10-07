@@ -1,0 +1,45 @@
+{
+  "name": "org.entcore~communication~{{ entcoreVersion }}",
+  "config":{
+    "main":"org.entcore.communication.Communication",
+    "auto-redeploy": false,
+    "ssl" : {{ ssl }},
+    "csrf-token" : {{ csrfToken }},
+    "mode": "{{ mode }}",
+    "port": 8015,
+    "address" : "wse.communication",
+    "initDefaultCommunicationRules" :
+      {% if defaultCommunicationRules is defined and defaultCommunicationRules %}
+        {{ defaultCommunicationRules }}
+      {% else %}
+        {
+          "Structure-Personnel" : {
+            "users" : "BOTH", "communiqueWith" : ["Structure-Teacher", "Structure-Relative", "Structure-Student"]
+          },
+          "Structure-Teacher" : {
+            "users" : "BOTH", "communiqueWith" : ["Structure-Personnel", "Structure-Relative", "Structure-Student"]
+          },
+          "Structure-Student" : {"users" : "OUTGOING"},
+          "Structure-Relative" : {"users" : "OUTGOING"},
+          "Class-Personnel" : {"users" : "OUTGOING"},
+          "Class-Teacher" : {"users" : "OUTGOING"},
+          "Class-Student" : {
+            "users" : "BOTH", "communiqueWith" : ["Class-Personnel", "Class-Teacher"]
+          },
+          "Class-Relative" : {
+            "users" : "BOTH", "Relative-Student" : "INCOMING", "communiqueWith" : ["Class-Personnel", "Class-Student", "Class-Teacher"]
+          }
+        }
+      {% endif %},
+    "publicConf": {
+      {% if xitiSwitch is defined and xitiSwitch %}
+        "xiti": {
+          "ID_SERVICE": {
+            "default": "",
+            "/admin-console": ""
+          }
+        }
+      {% endif %}
+    }
+  }
+}

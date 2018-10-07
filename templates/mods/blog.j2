@@ -1,0 +1,24 @@
+{
+  "name": "org.entcore~blog~{{ blogVersion }}",
+    "config": {
+      "main":"org.entcore.blog.Blog",
+      "port": 8018,
+      "address" : "wse.blog",
+      "auto-redeploy": false,
+      "ssl" : {{ ssl }},
+      "app-name" : "Blog",
+      "app-address" : "/blog",
+      "host": "{{ host }}",
+      "userbook-host": "{{ host }}",
+      "mode": "{{ mode }}",
+      "publicConf": {
+          {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+            "xiti": {
+              "ID_SERVICE": {
+                "default": 2
+              }
+            }
+          {% endif %}
+        }
+    }
+}

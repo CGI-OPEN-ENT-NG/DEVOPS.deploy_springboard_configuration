@@ -84,6 +84,8 @@ smsProviders: '{}'
 cluster: 'false'
 neo4jSlaveReadOnly: 'false'
 csrfToken: 'true'
+wizardFeeders: '["CSV"]'
+casExternalLoginUri:
 # E.g. your domain name
 #modowner: fr.wseduc
 

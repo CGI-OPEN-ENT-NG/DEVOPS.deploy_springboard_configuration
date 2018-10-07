@@ -1,0 +1,27 @@
+{
+  "name": "org.entcore~conversation~{{ entcoreVersion }}",
+  "config":{
+    "main":"org.entcore.conversation.Conversation",
+    "host": "{{ host }}",
+    "mode": "{{ mode }}",
+    "csrf-token" : {{ csrfToken }},
+    "ssl" : {{ ssl }},
+    "auto-redeploy": false,
+    "userbook-host": "{{ host }}",
+    "app-address": "/conversation/conversation",
+    "port": 8019,
+    "app-name" : "Messagerie",
+    "app-icon" : "conversation-large",
+    "sql": true,
+    "db-schema": "conversation",
+    "publicConf": {
+      {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+        "xiti": {
+          "ID_SERVICE": {
+            "default": 10
+          }
+        }
+      {% endif %}
+    }
+  }
+}

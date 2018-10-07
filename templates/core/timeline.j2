@@ -1,0 +1,18 @@
+{
+  "name": "org.entcore~timeline~{{ entcoreVersion }}",
+  "config":{ 
+    "csrf-token" : {{ csrfToken }},
+    "main":"org.entcore.timeline.Timeline",
+    "port": 8016,
+    "app-name": "Timeline",
+    "app-address": "/timeline/timeline",
+    "address" : "wse.timeline",
+    "auto-redeploy": false,
+    "ssl" : {{ ssl }},
+    "host": "{{ host }}",
+    "antiFloodClear": 60000,
+    "sql": true,
+    "db-schema": "flashmsg",
+    "mode": "{{ mode }}"
+  }
+}

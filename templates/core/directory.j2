@@ -1,0 +1,41 @@
+{
+  "name": "org.entcore~directory~{{ entcoreVersion }}",
+  "config":{
+    "path-prefix": "directory",
+    "auto-redeploy": false,
+    "ssl" : {{ ssl }},
+    "mode": "{{ mode }}",
+    "host": "{{ host }}",
+    "csrf-token" : {{ csrfToken }},
+    "port": 8003,
+    "email": "{{ senderEmail }}",
+    "app-name": "Directory",
+    "workspace-url": "localhost",
+    "workspace-port":8011,
+    "workspace-prefix" : "/workspace",
+    "activation-welcome-message" : {{ activationWelcomeMessage }},
+    "createdUserEmail" : {{ createdUserEmail }},
+    "classDefaultRoles" : {{ classDefaultRoles }},
+    "user-book-data":{
+      "default-theme":"default",
+      "default-avatar": "no-avatar.jpg",
+      "default-mood" : "default",
+      "hobbies": ["sport","cinema", "animals", "music", "places", "books"]
+    },
+    "publicConf": {
+        "feeders" : {{ wizardFeeders }}
+        {% if federatedAddress is defined and federatedAddress %}
+        ,"federatedAddress" : {{ federatedAddress }}
+        {% endif %}
+        {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+          ,"xiti": {
+            "ID_SERVICE": {
+              "default": 10,
+              "/userbook/mon-compte": "",
+              "/admin-console": ""
+            }
+          }
+        {% endif %}
+    }
+  }
+}

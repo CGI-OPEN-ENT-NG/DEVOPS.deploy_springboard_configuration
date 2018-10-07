@@ -1,0 +1,36 @@
+{
+      "name": "org.entcore~auth~{{ entcoreVersion }}",
+      "config":{
+        "path-prefix": "auth",
+        "port": 8009,
+        "auto-redeploy": false,
+        "ssl" : {{ ssl }},
+        "mode": "{{ mode }}",
+        "email": "{{ senderEmail }}",
+        "mandatory": {{ authMandatoryFields }},
+        "activationAutoLogin" : {{ activationAutoLogin }},
+        "teacherForgotPasswordEmail" : {{ teacherForgotPasswordEmail }},
+        {% if openidconnectFederate is defined and openidconnectFederate %}
+        "openid-federate" : {{ openidconnectFederate }},
+        "slo": {{ samlSLO }},
+        {% endif %}
+        {% if samlMetadataFolder is defined and samlMetadataFolder %}
+        "saml-metadata-folder" : "{{ samlMetadataFolder }}",
+        "saml-private-key": "{{ samlPrivateKey }}",
+        "saml-services-providers" : {{ samlServicesProviders }},
+        "saml-issuer": "{{ samlIssuer }}",
+        "check-federated-login" : true,
+        "slo": {{ samlSLO }},
+        "loginUri":"{{ federationLoginUri }}",
+        "callbackParam":"{{ federationCallBackParam }}",
+        {% endif %}
+        "authenticationServer": {
+          "loginURL": "/auth/login",
+          "logoutURL": "/auth/logout",
+          "loginCallback": "",
+          "logoutCallback": ""
+        },
+        "passwordRegex" : "{{ passwordRegex }}",
+        "host": "{{ host }}"
+      }
+    }

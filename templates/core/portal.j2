@@ -1,0 +1,65 @@
+{
+  "name": "org.entcore~portal~{{ entcoreVersion }}",
+  "config":{
+    "port": 8017,
+    "auto-redeploy": false,
+    "ssl" : {{ ssl }},
+    "csrf-token" : {{ csrfToken }},
+    "mode": "{{ mode }}",
+    {% if assetsPath is defined and assetsPath %}
+        "assets-path": "{{ assetsPath }}",
+    {% endif %}
+    "path-prefix": "",
+    "root-page": "/timeline/timeline",
+    "urls": {
+      "userbook": "/userbook",
+      "auth": "/auth",
+      "portal": "/",
+      {% if logoutCallback is defined and logoutCallback %}
+      "logoutCallback": "{{ logoutCallback }}"
+      {% else %}
+      "logoutCallback": "/"
+      {% endif %}
+    },
+    "admin-urls": [
+      {"name": "directory", "url": "/directory/admin-console"},
+      {"name": "appRegistry", "url": "/appregistry/admin-console"},
+      {"name": "communication", "url": "/communication/admin-console"},
+      {"name": "wizard", "url": "/directory/wizard"},
+      {"name": "timeline.history", "url": "/timeline/admin-history"},
+      {"name": "timeline", "url": "/timeline/admin-console", "allowed": ["SUPER_ADMIN"]},
+      {"name": "welcomeMessage", "url": "/auth/admin-welcome-message", "allowed": ["SUPER_ADMIN"]},
+      {"name": "flashMessage", "url": "/timeline/flashmsg/admin", "allowed": ["SUPER_ADMIN"]},
+      {"name": "embed", "url": "/infra/embed/admin", "allowed": ["SUPER_ADMIN"]}
+      {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+      ,{"name": "xiti", "url": "/xiti/admin-console", "allowed": ["SUPER_ADMIN"]}
+      {% endif %}
+      {% if keyring is defined and keyring == 'true' %}
+      ,{"name": "keyring", "url": "/sso/keyring/admin-console", "allowed": ["SUPER_ADMIN"]}
+      {% endif %}
+      {% if edtudt is defined and edtudt == 'true' %}
+      ,{"name": "edtudt", "url": "/directory/timetable"}
+      {% endif %}
+
+    ],
+    "widgets": [
+      {% if widgets is defined and widgets %}
+          {{ widgets }}
+      {% else %}
+        {
+          "name": "notes",
+          "path": "/public/template/notes.html",
+          "js": "/public/js/notes.js"
+        },
+        {
+          "name": "calendar",
+          "path": "/public/template/calendar.html",
+          "js": "/public/js/calendar.js"
+        }
+      {% endif %}
+    ],
+    "resources-applications": [
+      {{ resourcesApplications }}
+    ]
+  }
+}
