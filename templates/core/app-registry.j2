@@ -1,0 +1,23 @@
+{
+  "name": "org.entcore~app-registry~{{ entcoreVersion }}",
+  "waitDeploy": true,
+  "config": {
+    "main": "org.entcore.registry.AppRegistry",
+    "auto-redeploy": false,
+    "csrf-token" : {{ csrfToken }},
+    "mode": "{{ mode }}",
+    "ssl": {{ ssl }},
+    "address": "wse.app.registry",
+    "port": 8012,
+    "publicConf": {
+      {% if xitiSwitch is defined and xitiSwitch == 'true' %}
+      "xiti": {
+        "ID_SERVICE": {
+          "default": "",
+          "/admin-console": ""
+        }
+      }
+      {% endif %}
+    }
+  }
+}

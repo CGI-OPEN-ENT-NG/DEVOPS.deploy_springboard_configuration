@@ -1,10 +1,7 @@
 - hosts: all
   connection: local
-  vars:
-    variable1: "Hello...!!!"
-    variable2: "My first playbook using template"
   tasks:
-    - name: Basic Template Example
+    - name: Generating springboard configuration
       template:
-        src: ent-core.j2
+        src: templates/ent-core.j2
         dest: /Users/utilisateur/Project/deploy_springboard/ent-core.json

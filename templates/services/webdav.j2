@@ -1,0 +1,16 @@
+{
+  "name": "fr.wseduc~mod-webdav~1.0.0",
+  "config": {
+    "address" : "webdav"
+    {% if 'true' == webdavCredential %}
+    ,
+    "credentials" : {
+      "{{ webdavHost }}" : {
+        "username" : "{{ webdavUsername }}",
+        "password" : "{{ webdavPassword }}",
+        "insecure" : {{ webdavInsecure }}
+      }
+    }
+  {% endif %}
+  }
+}

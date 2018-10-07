@@ -1,0 +1,57 @@
+{
+  "name": "org.entcore~infra~{{ entcoreVersion }}",
+  "waitDeploy": true,
+  "config": {
+    "port": 8001,
+    "mode": "{{ mode }}",
+    "auto-redeploy": false,
+    "path-prefix": "infra",
+    "sql": true,
+    {% if signKey is defined and signKey %}
+    "key": "{{ signKey }}",
+    {% endif %}
+    {% if contentSecurityPolicy is defined and contentSecurityPolicy %}
+    "content-security-policy": "{{ contentSecurityPolicy }}",
+    {% endif %}
+    "cluster" : {{ cluster }},
+    "skins": {{ skins }},
+    {% if swiftUri is defined and swiftUri %}
+    "swift" : {
+      "uri" : "{{ swiftUri}}",
+      "container" : "{{ swiftContainer }}",
+      "user" : "{{ swiftUser }}",
+      "key" : "{{ swiftKey }}"
+    },
+    {% elif fsStoragePath is defined and fsStoragePath %}
+    "file-system" : {
+      "path" : "{{ fsStoragePath }}",
+      "flat" : {{ flatFsStorage }}
+    },
+    {% else %}
+    "gridfs-address" : "wse.gridfs.persistor",
+    {% endif %}
+    {% if sharedConf is defined and sharedConf %}
+    "sharedConf": {{ sharedConf }},
+    {% endif %}
+    {% if emailConfig is defined and emailConfig %}
+    "emailConfig": {{ emailConfig }},
+    {% else %}
+    "emailConfig": {
+      "email": "{{ senderEmail }}",
+      "host": "{{ host }}"
+    },
+    {% endif %}
+    "eventConfig": {
+    "user-blacklist" : []
+    },
+    "neo4jConfig" : {
+      {% if serverUris is defined and serverUris %}
+      "server-uris": {{ serverUris }},
+      {% else %}
+      "server-uri": "{{ neo4jUri }}/db/data/",
+      {% endif %}
+      "slave-readonly": {{ neo4jSlaveReadOnly }},
+      "legacy-indexes" : [{ "for" : "node", "name" : "node_auto_index", "type" : "fulltext" }]
+    }
+  }
+}

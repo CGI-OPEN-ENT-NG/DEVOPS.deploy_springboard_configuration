@@ -1,0 +1,28 @@
+{
+  "name": "fr.wseduc~mod-image-resizer~2.0.0",
+  "worker": true,
+  "multi-threaded": true,
+  "waitDeploy": true,
+  "config": {
+    "address": "wse.image.resizer",
+    "fs-flat": {{ flatFsStorage }},
+    {% if swiftUri is defined and swiftUri %}
+    "swift" : {
+      "uri" : "{{ swiftUri }}",
+      "container" : "{{ swiftContainer }}",
+      "user" : "{{ swiftUser }}",
+      "key" : "{{ swiftKey }}"
+    }
+    {% else %}
+    "gridfs" : {
+      {% if seeds is defined and seeds %}
+      "seeds": {{ seeds }},
+      {% endif %}
+      "host": "{{ mongoHost }}",
+      "port": {{ mongoPort }},
+      "db_name": "{{ dbName }}",
+      "pool_size": 10
+    }
+    {% endif %}
+  }
+}

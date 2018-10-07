@@ -1,0 +1,17 @@
+{
+  "name": "io.vertx~mod-mongo-persistor~3.0.0",
+  "waitDeploy": true,
+  "worker": true,
+  "multi-threaded": true,
+  "config": {
+    "address": "wse.mongodb.persistor",
+    {% if seeds is defined and seeds %}
+    "seeds": {{ seeds }},
+    {% endif %}
+    "host": "{{ mongoHost }}",
+    "port": {{ mongoPort }},
+    "db_name": "{{ dbName }}",
+    "use_mongo_types": true,
+    "pool_size": 10
+  }
+}

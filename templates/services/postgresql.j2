@@ -1,0 +1,12 @@
+{
+  "name": "fr.wseduc~mod-postgresql~1.0.0",
+  "waitDeploy": true,
+  "worker": true,
+  "multi-threaded": true,
+  "config": {
+    "address": "sql.persistor",
+    "url" : "{{ sqlUrl }}",
+    "username" : "{{ sqlUsername }}",
+    "password" : "{{ sqlPassword }}"
+  }
+}
