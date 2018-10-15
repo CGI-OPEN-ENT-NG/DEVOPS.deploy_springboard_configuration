@@ -3,5 +3,5 @@
   tasks:
     - name: Generating springboard configuration
       template:
-        src: templates/ent-core.j2
-        dest: /Users/utilisateur/Project/deploy_springboard/ent-core.json
+        src: templates/{{ inventory_hostname }}.j2
+        dest: "{{ playbook_dir }}/ent-core.json"
