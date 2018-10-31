@@ -1,2 +1,9 @@
+[ng1.preprod-ent.fr]
+ng1.preprod-ent.fr
+
+[ng2.preprod-ent.fr]
+ng2.preprod-ent.fr
+
 [all]
-localhost
+ng1.preprod-ent.fr
+ng2.preprod-ent.fr

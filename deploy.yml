@@ -1,7 +1,32 @@
-- hosts: all
-  connection: local
+---
+- hosts: "{{ target }}"
+  remote_user: centos
   tasks:
-    - name: Generating springboard configuration
+    - name: Backup current configuration file
+      become: yes
+      become_user: "{{ vertx_user }}"
+      become_method: su
+      copy:
+        src: "{{ springboard_path }}/ent-core.json"
+        dest: "{{ springboard_path }}/ent-core.json.bkp.{{ ansible_date_time.iso8601 }}"
+        owner: "{{ vertx_user }}"
+        group: "{{ vertx_group }}"
+        remote_src: yes
+        mode: 0644
+        backup: yes
+    - name: "Generating springboard configuration for {{ target }}"
+      become: yes
+      become_method: sudo
       template:
         src: templates/{{ inventory_hostname }}.j2
-        dest: "{{ playbook_dir }}/ent-core.json"
+        dest: "{{ springboard_path }}/ent-core.json"
+        owner: "{{ vertx_user }}"
+        group: "{{ vertx_group }}"
+      tags: configuration
+    - name: Restart springboard
+      become: yes
+      become_user: "{{ vertx_user }}"
+      become_method: su
+      shell: "cd {{ springboard_path }} && ./build.sh stop run"
+      tags: start, stop, restart
+...

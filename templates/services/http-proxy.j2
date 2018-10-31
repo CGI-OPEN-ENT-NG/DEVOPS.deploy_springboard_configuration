@@ -55,75 +55,108 @@
         "location": "/admin",
         "proxy_pass": "http://localhost:8089"
       }
-,
-      {
+      {% if actualitesVersion is defined and actualitesVersion %}
+      ,{
         "location": "/actualites",
         "proxy_pass": "http://localhost:8022"
-      },
-      {
+      }
+      {% endif %}
+      {% if blogVersion is defined and blogVersion %}
+      ,{
         "location": "/blog",
         "proxy_pass": "http://localhost:8018"
-      },
-      {
+      }
+      {% endif %}
+      {% if bookmarkVersion is defined and bookmarkVersion %}
+      ,{
         "location": "/bookmark",
         "proxy_pass": "http://localhost:8032"
-      },
-      {
+      }
+      {% endif %}
+      {% if calendarVersion is defined and calendarVersion %}
+      ,{
         "location": "/calendar",
         "proxy_pass": "http://localhost:8098"
-      },
-      {
+      }
+      {% endif %}
+      {% if collaborativeEditorVersion is defined and collaborativeEditorVersion %}
+      ,{
         "location": "/collaborativeeditor",
         "proxy_pass": "http://localhost:8668"
-      },
-      {
+      }
+      {% endif %}
+      {% if collaborativewallVersion is defined and collaborativewallVersion %}
+      ,{
         "location": "/collaborativewall",
         "proxy_pass": "http://localhost:8071"
-      },
-      {
+      }
+      {% endif %}
+      {% if communityVersion is defined and communityVersion %}
+      ,{
         "location": "/community",
         "proxy_pass": "http://localhost:8078"
-      },
-      {
+      }
+      {% endif %}
+      {% if competencesVersion is defined and competencesVersion %}
+      ,{
         "location": "/competences",
         "proxy_pass": "http://localhost:8129"
-      },
-      {
+      }
+      {% endif %}
+      {% if forumVersion is defined and forumVersion %}
+      ,{
         "location": "/forum",
         "proxy_pass": "http://localhost:8024"
-      },
-      {
+      }
+      {% endif %}
+      {% if mindmapVersion is defined and mindmapVersion %}
+      ,{
         "location": "/mindmap",
         "proxy_pass": "http://localhost:8666"
-      },
-      {
+      }
+      {% endif %}
+      {% if pagesVersion is defined and pagesVersion %}
+      ,{
         "location": "/pages",
         "proxy_pass": "http://localhost:8025"
-      },
-      {
+      }
+      {% endif %}
+      {% if presencesVersion is defined and presencesVersion %}
+      ,{
         "location": "/presences",
         "proxy_pass": "http://localhost:8062"
-      },
-      {
+      }
+      {% endif %}
+      {% if rackVersion is defined and rackVersion %}
+      ,{
         "location": "/rack",
         "proxy_pass": "http://localhost:8031"
-      },
-      {
+      }
+      {% endif %}
+      {% if rbsVersion is defined and rbsVersion %}
+      ,{
         "location": "/rbs",
         "proxy_pass": "http://localhost:8026"
-      },
-      {
+      }
+      {% endif %}
+      {% if rssVersion is defined and rssVersion %}
+      ,{
         "location": "/rss",
         "proxy_pass": "http://localhost:8028"
-      },
-      {
+      }
+      {% endif %}
+      {% if timelinegeneratorVersion is defined and timelinegeneratorVersion %}
+      ,{
         "location": "/timelinegenerator",
         "proxy_pass": "http://localhost:8099"
-      },
-      {
+      }
+      {% endif %}
+      {% if wikiVersion is defined and wikiVersion %}
+      ,{
         "location": "/wiki",
         "proxy_pass": "http://localhost:8030"
-      }        
+      } 
+      {% endif %}
     ]
   }
 }

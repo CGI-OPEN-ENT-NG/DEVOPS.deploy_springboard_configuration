@@ -1,4 +1,7 @@
 ---
+springboard_path: /appli/springboard-ent77
+vertx_user: ong
+vertx_group: ong
 mode: dev
 ssl: 'false'
 host: http://localhost:8090
@@ -45,7 +48,6 @@ widgets: '{"name": "recorder", "path": "/public/template/record-me.html", "js": 
 defaultCommunicationRules: '{"Structure-Personnel" : { "users" : "BOTH", "communiqueWith" : ["Structure-Teacher", "Structure-Relative", "Structure-Student"]},"Structure-Teacher" : { "users" : "BOTH", "communiqueWith" : ["Structure-Personnel", "Structure-Relative", "Structure-Student"]},"Structure-Student" : {"users" : "OUTGOING"},"Structure-Relative" : {"users" : "OUTGOING"},"Class-Personnel" : {"users" : "OUTGOING"},"Class-Teacher" : {"users" : "OUTGOING"},"Class-Student" : { "users" : "BOTH", "communiqueWith" : ["Class-Teacher"]},"Class-Relative" : { "users" : "BOTH", "Relative-Student" : "BOTH", "communiqueWith" : ["Class-Teacher"]}}'
 skin: 'raw'
 assetsPath: /srv/springboard
-entcoreVersion: '3.1.13'
 swiftUri: 
 swiftContainer: 
 swiftUser: 
@@ -118,7 +120,7 @@ junitVersion: 4.10
 processorVersion: 1.0.0
 
 # compile lib
-entCoreVersion: 3.1.13
+entcoreVersion: 3.1.13
 blogVersion: 2.1.3
 actualitesVersion: 1.1.2
 forumVersion: 1.1.3
